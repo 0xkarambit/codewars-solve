@@ -1,0 +1,23 @@
+{
+  "name": "solve",
+  "version": "1.0.0",
+  "description": "codewars automation tool to create file with name of challenge from challenge url",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarshitJoshi9152/codewars-solve.git"
+  },
+  "keywords": [
+    "codewars",
+    "automation"
+  ],
+  "author": "Harshit Joshi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HarshitJoshi9152/codewars-solve/issues"
+  },
+  "homepage": "https://github.com/HarshitJoshi9152/codewars-solve#readme"
+}
