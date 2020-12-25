@@ -1,8 +1,14 @@
 #!/usr/bin/env node
-const {stdout, stderr, argv } = process;
 const https = require("https");
+// const { yellow, cyan } = require('kleur');
+// const {chalk} = require('chalk');
+
+// when starting script use `-r esm`
+// import { exit } from "./helper_functions";
+import "./helper_functions"
 
 const log = console.log;
+const { argv } = process;
 
 let url = argv[2];
 
@@ -38,24 +44,42 @@ https.get(query, (res) => {
 	// The whole response has been received. Print out the result.
 	res.on('end', () => {
 	  console.log(JSON.parse(data));
-      let title = JSON.parse(data).slug;
+    title = JSON.parse(data).slug;
+    log(red(title))
+    let d = new Date();
+    log({time: d.toLocaleTimeString(), date: d.toLocaleDateString(), day: d.getDay()});
+    log(new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'long' }).format(d))
+    // provide a way to set the script format and a user.js to pass options to generate the script/program
 	});
 })
+
 .on("error", (err) => {
   console.log("Error: " + err.message);
 });
 
-log(title)
+log(red(title))
 
 // now only creating the file and writing some prerequisite content is left
 
-function exit(statment) {
-	console.log(statment);
-	process.exit();
+// function exit(statment) {
+// 	console.log(statment);
+// 	process.exit();
+// }
+
+function makeFile(title, ext = 'js') {
+  // add date, name, challengeName, // should i get name, etc from a config file ?
+  let d = new Date();
+  let textView =
+  `${url}
+  ${name} ${date} ${startTime}`;
 }
 
-function makeFile(title) {
+function red(str) {
+  return '\x1b[91m' + str + '\x1b[0m';
 }
+
+
+
 
 /* code for Sum string as numbers
  * also try read the solutions submitted somebody implemented BigInt !! https://www.codewars.com/kata/reviews/5324945e2ece5e1f32000373/groups/572a59c2a3af38951f000858
@@ -105,3 +129,4 @@ function sumStrings(a,b) {
  * oooh i forgot about the instagram bot idea.
  * also TODO
  * make a nodejs object formatter colored output included for curl response viewing.
+*/

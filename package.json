@@ -4,7 +4,8 @@
   "description": "codewars automation tool to create file with name of challenge from challenge url",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node -r esm ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/HarshitJoshi9152/codewars-solve/issues"
   },
-  "homepage": "https://github.com/HarshitJoshi9152/codewars-solve#readme"
+  "homepage": "https://github.com/HarshitJoshi9152/codewars-solve#readme",
+  "dependencies": {
+    "esm": "^3.2.25"
+  }
 }
