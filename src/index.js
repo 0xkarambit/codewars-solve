@@ -61,11 +61,6 @@ log(red(title))
 
 // now only creating the file and writing some prerequisite content is left
 
-// function exit(statment) {
-// 	console.log(statment);
-// 	process.exit();
-// }
-
 function makeFile(title, ext = 'js') {
   // add date, name, challengeName, // should i get name, etc from a config file ?
   let d = new Date();

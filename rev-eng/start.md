@@ -31,8 +31,8 @@ Ably
 ## requests made while running **test**
 
 1. authorise
-2. run
-3. run
+2. run (204 OPTIONS) // no response
+3. run (200 POST)  // response
 4. notify
 > and some other fonts related requests
 
