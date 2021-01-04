@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-const https = require("https");
-// const { yellow, cyan } = require('kleur');
-// const {chalk} = require('chalk');
-
 // when starting script use `-r esm`
-// import { exit } from "./helper_functions";
-import "./helper_functions"
+const https = require("https");
+const fs = require("fs");
+import { resolve } from "path";
+const path = require("path")
+// import "./helper_functions" // cant use F12 to do def lookup with this syntax
+import { exit } from "./helper_functions";
 
 const log = console.log;
 const { argv } = process;
@@ -19,7 +19,7 @@ catch(e)
 	if (e.message.includes("Invalid URL")){
 		exit("invalid URL");
 	}
-	log(e); // || exit(e)
+	exit(e); // || exit(e)
 }
 
 // check if url is from codewars website only;
@@ -27,11 +27,56 @@ if (url.hostname !== "www.codewars.com") {
 	exit("not a codewars url");
 }
 
+// output/ coding file writing ? well normally this info should be in a config file...
+if (argv.includes("--file") || argv.includes("-f")) {
+  // ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
+  // so i will just use node -r esm src/index.js ...args to run for now;
+
+  // verify if the file path is provided
+  let i = argv.indexOf("--file") || argv.includes("-f");
+  if (!argv[i + 1]) exit("no file provided");
+  // ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
+  //     (i am using git scm so for me / is essentially "C:\Program Files\Git");
+  // but if we use `join` if a user enters --file /index.js the file will be created at process.cwd()/index.js
+  // should be i guess (funny thing for me it does this (again i am using git scm thats why)
+  // "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
+  // simple name.js works with both, lets just use resolve for now. (seems better to me btw);
+  let filePath = resolve(process.cwd(), argv[i + 1]);
+  log(red(filePath));
+  log((fs.existsSync(filePath)) ? "file exists":"file does not exist");
+  if (fs.existsSync(filePath)) {
+    // should i ask to overwrite the file?
+    // i think i should see if it is has some data ya.
+    let shouldWrite = true;
+    if (fs.lstatSync(filePath).size == 0) {
+      // file is empty ...
+
+      // can the stats still be disturbed if we write to it ? hmmmm
+      // lets write for now...
+    } else {
+      // ask the user if he wants to overwrite the file..
+      shouldWrite = getUserInput(`${path.basename(filePath)} already exists. do you wish to overwrite its contents ?`);
+      // we are yet to take care of getUserInput();
+      function getUserInput(msg) {
+        log(msg);
+      }
+    }
+    if (shouldWrite) {
+      // write
+      log("writing!")
+      fs.writeFileSync(filePath, "some data .. haha\n");
+    }
+  }
+  // https://nodejs.org/api/fs.html#fs_file_system_flags
+  exit("good work !");
+}
+
+// main code
 const id = url.pathname.split('/')[2];
 const query = `https://www.codewars.com/api/v1/code-challenges/${id}`
 let title = "" // get title from https://www.codewars.com/api/v1/code-challenges/:id_or_slug
 
-log(query);
+log(red(query));
 
 https.get(query, (res) => {
 	let data = '';
