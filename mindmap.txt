@@ -1,0 +1,38 @@
+so todo :
+
+find info 
+format and write contents;
+
+provide a view/template option to user ? [maybe later]
+
+i think Q/A and help would best be suited with website
+
+should this also keep track of [done, drafts, etc] (i mean like categories the solutions ?)
+
+[bug]
+
+ok -f not working
+also new filenot being created
+watch todo in index.js
+i feel that finding size of file when we know it exist is a bit overkill is it ?
+
+[nodejs]
+
+whats up with UnhandledPromiseRejectionWarning ?
+code execution doesnt stop when we encounter it i guess
+
+[OFF_TOPIC]
+
+git clean -fdx , instead of rmdrf node_module ?
+
+
+[code]
+// get input
+function getInput(msg) {
+	return new Promise((resolve) => {
+		rl.question(msg, function(ans) {
+			rl.close();
+			resolve(ans);
+		});
+	});
+}

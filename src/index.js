@@ -3,9 +3,10 @@
 const https = require("https");
 const fs = require("fs");
 import { resolve } from "path";
+import { stderr } from "process";
 const path = require("path")
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
-import { exit } from "./helper_functions";
+import { exit, getInput } from "./helper_functions";
 
 const log = console.log;
 const { argv } = process;
@@ -26,14 +27,14 @@ catch(e)
 if (url.hostname !== "www.codewars.com") {
 	exit("not a codewars url");
 }
-
+(async () => {
 // output/ coding file writing ? well normally this info should be in a config file...
 if (argv.includes("--file") || argv.includes("-f")) {
   // ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
   // so i will just use node -r esm src/index.js ...args to run for now;
 
   // verify if the file path is provided
-  let i = argv.indexOf("--file") || argv.includes("-f");
+  let i = (argv.indexOf("--file") !== -1) ? argv.indexOf("--file") : argv.indexOf("-f");
   if (!argv[i + 1]) exit("no file provided");
   // ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
   //     (i am using git scm so for me / is essentially "C:\Program Files\Git");
@@ -42,34 +43,52 @@ if (argv.includes("--file") || argv.includes("-f")) {
   // "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
   // simple name.js works with both, lets just use resolve for now. (seems better to me btw);
   let filePath = resolve(process.cwd(), argv[i + 1]);
+
   log(red(filePath));
   log((fs.existsSync(filePath)) ? "file exists":"file does not exist");
+
+  let shouldWrite = 'y';
+
+  // check if file is empty if it already exists, ask to overwrite if not.
   if (fs.existsSync(filePath)) {
     // should i ask to overwrite the file?
     // i think i should see if it is has some data ya.
-    let shouldWrite = true;
     if (fs.lstatSync(filePath).size == 0) {
-      // file is empty ...
-
-      // can the stats still be disturbed if we write to it ? hmmmm
-      // lets write for now...
+      log("file is empty ...");
+      /* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
     } else {
       // ask the user if he wants to overwrite the file..
-      shouldWrite = getUserInput(`${path.basename(filePath)} already exists. do you wish to overwrite its contents ?`);
-      // we are yet to take care of getUserInput();
-      function getUserInput(msg) {
-        log(msg);
+      shouldWrite = await getInput(`${path.basename(filePath)} already exists. do you wish to overwrite its contents ?`);
+    }
+  }
+
+  if (['y','yes','Y','YES'].includes(shouldWrite)) {
+    log("writing!")
+    // check access .. wait do it only if file already exists
+    // TODO: this is bad coding style change this,  can we read lstats without access ?
+    try {
+      fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
+      // console.log('can read/write');
+    } catch (err) {
+      if (!err.code == 'ENONENT') {
+        exit('no access!');
       }
     }
-    if (shouldWrite) {
-      // write
-      log("writing!")
-      fs.writeFileSync(filePath, "some data .. haha\n");
-    }
+    let temp_data = "some data .. haha\n";
+    await fs.promises.writeFile(filePath, temp_data).catch((err) => {
+      log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
+      exit(err.message + err.code);
+    });
+    log("wrote !!")
+  } else {
+    log("SHOULDNT WRITE ... aborting ...")
   }
   // https://nodejs.org/api/fs.html#fs_file_system_flags
   exit("good work !");
 }
+
+
+// separation........ <hr>
 
 // main code
 const id = url.pathname.split('/')[2];
@@ -103,6 +122,13 @@ https.get(query, (res) => {
 });
 
 log(red(title))
+
+
+
+
+})();
+
+
 
 // now only creating the file and writing some prerequisite content is left
 
