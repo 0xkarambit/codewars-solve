@@ -9,6 +9,9 @@ i think Q/A and help would best be suited with website
 
 should this also keep track of [done, drafts, etc] (i mean like categories the solutions ?)
 
+we need to have a config file to keep data (like name or other hardcoded info eg api key)
+or better yet export data with a js module
+
 [bug]
 
 ok -f not working
