@@ -10,10 +10,12 @@ function exit(msg) {
 }
 
 function getInput(msg) {
+	// i think i should accept a validating function or regexp
 	return new Promise((resolve) => {
 		rl.question(msg, function(ans) {
 			rl.close();
 			resolve(ans);
+			// should i really accept enter as an answerr
 		});
 	});
 }

@@ -12,6 +12,15 @@ should this also keep track of [done, drafts, etc] (i mean like categories the s
 we need to have a config file to keep data (like name or other hardcoded info eg api key)
 or better yet export data with a js module
 
+should i add a default template options/variables file ?
+
+[intl]
+
+methods (constructors) to search for
+Intl.DateTimeFormat
+Intl.Locale
+Intl.RelativeTimeFormat
+
 [bug]
 
 ok -f not working
@@ -26,6 +35,7 @@ code execution doesnt stop when we encounter it i guess
 
 [OFF_TOPIC]
 
+ok so ~ is equal to !! and casts to Boolean but why does ~9 return -10 ?
 git clean -fdx , instead of rmdrf node_module ?
 
 

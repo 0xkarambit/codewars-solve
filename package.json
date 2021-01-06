@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/HarshitJoshi9152/codewars-solve#readme",
   "dependencies": {
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "lodash": "^4.17.20",
+    "squirrelly": "^8.0.8"
   }
 }

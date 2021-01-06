@@ -2,11 +2,14 @@
 // when starting script use `-r esm`
 const https = require("https");
 const fs = require("fs");
-import { resolve } from "path";
-
 const path = require("path");
+// import { resolve } from "path";
+
+const sqrl = require('squirrelly');
+
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
 import { exit, getInput } from "./helper_functions";
+import templateEngine from "./template.js";
 
 const log = console.log;
 const { argv } = process;
@@ -47,7 +50,7 @@ if (url.hostname !== "www.codewars.com") {
 		// should be i guess (funny thing for me it does this (again i am using git scm thats why)
 		// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
 		// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
-		let filePath = resolve(process.cwd(), argv[i + 1]);
+		let filePath = path.resolve(process.cwd(), argv[i + 1]);
 
 		log(red(filePath));
 		log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
@@ -120,7 +123,7 @@ if (url.hostname !== "www.codewars.com") {
 		// The whole response has been received. Print out the result.
 		res.on("end", () => {
 			kata = JSON.parse(data);
-			console.log(kata);
+			// console.log(kata);
 			title = kata.slug;
 			log(red(title));
 			let d = new Date();
@@ -135,9 +138,30 @@ if (url.hostname !== "www.codewars.com") {
 					timeStyle: "long"
 				}).format(d)
 			);
-			await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4))
-			.catch(({message, code}) => exit(message + code) );
+			// await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4))
+			// .catch(({message, code}) => exit(message + code) );
 			// provide a way to set the script format and a user.js to pass options to generate the script/program
+
+			// we should build the file here ...
+			// should it be like views and template engines?
+
+			// let name = "HarshitJoshi" // well it should be in config or js export module really
+			// let file = `${name} ${url}`;
+			// next line doesnt work but join does
+			// path.normalize(__dirname, "./../config.js")
+
+			const config = require(path.join(__dirname, "./../config.js"));
+			// log(config.branch);
+			let temp = templateEngine.getTemplate(config.templateFilePath)
+			
+			// log(temp);
+			log(templateEngine.render(temp, config));
+			// i tried sqrl and _ but i now think that i should make my own engine
+			// log(sqrl.render(temp, config));
+			// log(templateEngine.processTemplate(temp, config))
+
+
+			// fs.writeFileSync('kata.json', JSON.stringify(kata, null, 4));
 		});
 	})
 	.on("error", (err) => {

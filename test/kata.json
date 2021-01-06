@@ -1,1 +1,52 @@
-{}
+{
+    "id": "52f831fa9d332c6591000511",
+    "name": "Molecule to atoms",
+    "slug": "molecule-to-atoms",
+    "category": "algorithms",
+    "publishedAt": "2014-02-11T15:06:01.732Z",
+    "approvedAt": "2014-05-26T00:20:56.439Z",
+    "languages": [
+        "javascript",
+        "coffeescript",
+        "haskell",
+        "python",
+        "rust",
+        "php",
+        "csharp",
+        "java",
+        "typescript",
+        "kotlin",
+        "groovy"
+    ],
+    "url": "https://www.codewars.com/kata/52f831fa9d332c6591000511",
+    "rank": {
+        "id": -5,
+        "name": "5 kyu",
+        "color": "yellow"
+    },
+    "createdAt": "2014-02-10T01:57:14.561Z",
+    "createdBy": {
+        "username": "romanzes",
+        "url": "https://www.codewars.com/users/romanzes"
+    },
+    "approvedBy": {
+        "username": "jhoffner",
+        "url": "https://www.codewars.com/users/jhoffner"
+    },
+    "description": "For a given chemical formula represented by a string, count the number of atoms of each element contained in the molecule and return an object (associative array in PHP, `Dictionary<string, int>` in C#, Map<String,Integer> in Java).\n\nFor example:\n\n```javascript\nvar water = 'H2O';\nparseMolecule(water); // return {H: 2, O: 1}\n\nvar magnesiumHydroxide = 'Mg(OH)2';\nparseMolecule(magnesiumHydroxide); // return {Mg: 1, O: 2, H: 2}\n\nvar fremySalt = 'K4[ON(SO3)2]2';\nparseMolecule(fremySalt); // return {K: 4, O: 14, N: 2, S: 4}\n```\n```php\nparse_molecule('H2O'); // => ['H' => 2, 'O' => 1]\nparse_molecule('Mg(OH)2'); // => ['Mg' => 1, 'O' => 2, 'H' => 2]\nparse_molecule('K4[ON(SO3)2]2'); // => ['K' => 4, 'O' => 14, 'N' => 2, 'S' => 4]\n```\n```csharp\nKata.ParseMolecule(\"H2O\"); // => new Dictionary<string, int> {{\"H\", 2}, {\"O\", 1}}\nKata.ParseMolecule(\"Mg(OH)2\"); // => new Dictionary<string, int> {{\"Mg\", 1}, {\"O\", 2}, {\"H\", 2}}\nKata.ParseMolecule(\"K4[ON(SO3)2]2\"); // => new Dictionary<string, int> {{\"K\", 4}, {\"O\", 14}, {\"N\", 2}, {\"S\", 4}}\n```\n```python\nwater = 'H2O'\nparse_molecule(water)                 # return {H: 2, O: 1}\n\nmagnesium_hydroxide = 'Mg(OH)2'\nparse_molecule(magnesium_hydroxide)   # return {Mg: 1, O: 2, H: 2}\n\nvar fremy_salt = 'K4[ON(SO3)2]2'\nparse_molecule(fremySalt)             # return {K: 4, O: 14, N: 2, S: 4}\n```\n```haskell\n>>> parseMolecule \"H2O\" -- water\nRight [(\"H\",2),(\"O\",1)]\n\n>>> parseMolecule \"Mg(OH)2\" -- magnesium hydroxide\nRight [(\"Mg\",1),(\"O\",2),(\"H\",2)]\n\n>>> parseMolecule \"K4[ON(SO3)2]2\" -- Fremy's salt\nRight [(\"K\",4),(\"O\",14),(\"N\",2),(\"S\",4)]\n\n>>> parseMolecule \"pie\"\nLeft \"Not a valid molecule\"\n```\n```rust\nparse_molecule(\"H2O\");           // water\n// Ok([(\"H\", 2), (\"O\", 1)])\n\nparse_molecule(\"Mg(OH)2\");       // magnesium hydroxide\n// Ok([(\"Mg\", 1), (\"O\", 2), (\"H\", 2)]\n\nparse_molecule(\"K4[ON(SO3)2]2\"); // Fremy's salt\n// Ok([(\"K\", 4), (\"O\", 14),(\"N\", 2),(\"S\", 4)])\n\nparse_molecule(\"pie\")\n// Err(ParseError)\n```\n```java\nString water = \"H2O\";\nparseMolecule.getAtoms(water); // return [H: 2, O: 1]\n\nString magnesiumHydroxide = \"Mg(OH)2\";\nparseMolecule.getAtoms(magnesiumHydroxide); // return [\"Mg\": 1, \"O\": 2, \"H\": 2]\n\nString fremySalt = \"K4[ON(SO3)2]2\";\nparseMolecule.getAtoms(fremySalt); // return [\"K\": 4, \"O\": 14, \"N\": 2, \"S\": 4]\n\nparseMolecule.getAtoms(\"pie\"); // throw an IllegalArgumentException\n```\nAs you can see, some formulas have brackets in them. The index outside the brackets tells you that you have to multiply count of each atom inside the bracket on this index. For example, in Fe(NO3)2 you have one iron atom, two nitrogen atoms and six oxygen atoms.\n\nNote that brackets may be **round, square or curly** and can also be **nested**. Index after the braces is **optional**.",
+    "totalAttempts": 64848,
+    "totalCompleted": 4417,
+    "totalStars": 1391,
+    "voteScore": 819,
+    "tags": [
+        "Algorithms",
+        "Parsing",
+        "Logic",
+        "Strings"
+    ],
+    "contributorsWanted": true,
+    "unresolved": {
+        "issues": 4,
+        "suggestions": 3
+    }
+}
