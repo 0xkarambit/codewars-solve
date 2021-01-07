@@ -3,12 +3,13 @@
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
+import axios from "axios";
 // import { resolve } from "path";
 
 
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
 import { exit, getInput } from "./helper_functions";
-import templateEngine from "./template.js";
+import TemplateEngine from "./template.js";
 
 const log = console.log;
 const { argv } = process;
@@ -37,133 +38,121 @@ if (url.hostname !== "www.codewars.com") {
 	const query = `https://www.codewars.com/api/v1/code-challenges/${id}`;
 	let title = ""; // get title from https://www.codewars.com/api/v1/code-challenges/:id_or_slug
 
-	let kata = {};
-
 	log(red(query));
 
-	https.get(query, (res) => {
-		let data = "";
+	const {data:kata} = await axios.get(query).catch( ({message, code}) => exit(message + code));
 
-		// A chunk of data has been recieved.
-		res.on("data", (chunk) => {
-			data += chunk;
-		});
-
-		// The whole response has been received. Print out the result.
-		res.on("end", async () => {
-			kata = JSON.parse(data);
-			// console.log(kata);
-			title = kata.slug;
-			log(red(title));
-			/*
-			let d = new Date();
-			log({
-				time: d.toLocaleTimeString(),
-				date: d.toLocaleDateString(),
-				day: d.getDay()
-			});
-			log(
-				new Intl.DateTimeFormat("en-GB", {
-					dateStyle: "full",
-					timeStyle: "long"
-				}).format(d)
-			);*/
-
-			// await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4))
-			// .catch(({message, code}) => exit(message + code) );
-			// provide a way to set the script format and a user.js to pass options to generate the script/program
-
-			// we should build the file here ...
-			// should it be like views and template engines?
-
-			// let name = "HarshitJoshi" // well it should be in config or js export module really
-			// let file = `${name} ${url}`;
-			// next line doesnt work but join does
-			// path.normalize(__dirname, "./../config.js")
-
-			const config = require(path.join(__dirname, "./../config.js"));
-			let temp = templateEngine.getTemplate(config.TEMPLATEFILEPATH);
-			// now i have to make a union of $kata and $config
-			// Object.fromEntries([...Object.entries(config), ...Object.entries(kataDefaultValueObj)])
-			// but kata object contains more datatypes than strings.
-			let dataObj = Object.fromEntries([...Object.entries(config), ...Object.entries(kata)]);
-			let toWrite = templateEngine.render(temp, dataObj);
-
-			// writing code 
-			if (argv.includes("--file") || argv.includes("-f")) {
-				// ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
-				// so i will just use node -r esm src/index.js ...args to run for now;
-
-				// verify if the file path is provided
-				let i =
-					argv.indexOf("--file") !== -1
-						? argv.indexOf("--file")
-						: argv.indexOf("-f");
-				if (!argv[i + 1]) exit("no file provided");
-				// ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
-				//     (i am using git scm so for me / is essentially "C:\Program Files\Git");
-				// but if we use `join` if a user enters --file /index.js the file will be created at process.cwd()/index.js
-				// should be i guess (funny thing for me it does this (again i am using git scm thats why)
-				// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
-				// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
-				let filePath = path.resolve(process.cwd(), argv[i + 1]);
-
-				log(red(filePath));
-				log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
-
-				let shouldWrite = "y";
-
-				// check if file is empty if it already exists, ask to overwrite if not.
-				if (fs.existsSync(filePath)) {
-					// should i ask to overwrite the file?
-					// i think i should see if it is has some data ya.
-					if (fs.lstatSync(filePath).size == 0) {
-						log("file is empty ...");
-						/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
-					} else {
-						// ask the user if he wants to overwrite the file..
-						shouldWrite = await getInput(
-							`${path.basename(
-								filePath
-							)} already exists. do you wish to overwrite its contents ?`
-						);
-					}
-				}
-
-				if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
-					log("writing!");
-					// check access .. wait do it only if file already exists
-					// TODO: this is bad coding style change this,  can we read lstats without access ?
-					try {
-						fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
-						// console.log('can read/write');
-					} catch (err) {
-						if (!err.code == "ENONENT") {
-							exit("no access!");
-						}
-					}
-					// let temp_data = "some data .. haha\n";
-					await fs.promises.writeFile(filePath, toWrite).catch((err) => {
-						log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
-						exit(err.message + err.code);
-					});
-					log("wrote !!");
-				} else {
-					// user said NO DONT OVERWRITE.
-					log("SHOULDNT WRITE ... aborting ...");
-				}
-				// https://nodejs.org/api/fs.html#fs_file_system_flags
-				// exit("good work !");
-			}
-
-			// fs.writeFileSync('kata.json', JSON.stringify(kata, null, 4));
-		});
-	})
-	.on("error", (err) => {
-		// watch for error on GET request
-		console.log("Error: " + err.message);
+	title = kata.slug;
+	log(red(title));
+	/*
+	let d = new Date();
+	log({
+		time: d.toLocaleTimeString(),
+		date: d.toLocaleDateString(),
+		day: d.getDay()
 	});
-	
+	log(
+		new Intl.DateTimeFormat("en-GB", {
+			dateStyle: "full",
+			timeStyle: "long"
+		}).format(d)
+	);*/
+
+	// await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4))
+	// .catch(({message, code}) => exit(message + code) );
+	// provide a way to set the script format and a user.js to pass options to generate the script/program
+
+	// we should build the file here ...
+	// should it be like views and template engines?
+
+	// let name = "HarshitJoshi" // well it should be in config or js export module really
+	// let file = `${name} ${url}`;
+	// next line doesnt work but join does
+	// path.normalize(__dirname, "./../config.js")
+
+	// READ CONFIG
+	const config = require(path.join(__dirname, "./../config.js"));
+	let dataObj = Object.fromEntries([...Object.entries(config), ...Object.entries(kata)]);
+
+	// ALL TEMPLATING CODE
+	let templateEngine = new TemplateEngine(config.TEMPLATEFILEPATH, dataObj);
+	templateEngine.loadTemplate();
+	let toWrite = templateEngine.render();
+
+	// WRITING CODE
+	// let fileName = templateEngine.getVal("slug");
+	// log(fileName)
+	// exit('lol');
+	if (argv.includes("--file") || argv.includes("-f")) {
+		// ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
+		// so i will just use node -r esm src/index.js ...args to run for now;
+
+		// verify if the file path is provided
+		let i =
+			argv.indexOf("--file") !== -1
+				? argv.indexOf("--file")
+				: argv.indexOf("-f");
+		if (!argv[i + 1]) exit("-f flag present but no file provided");
+		// ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
+		//     (i am using git scm so for me / is essentially "C:\Program Files\Git");
+		// but if we use `join` if a user enters --file /index.js the file will be created at process.cwd()/index.js
+		// should be i guess (funny thing for me it does this (again i am using git scm thats why)
+		// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
+		// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
+		let filePath = path.resolve(process.cwd(), argv[i + 1]);
+
+		log(red(filePath));
+		log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
+
+		let shouldWrite = "y";
+
+		// check if file is empty if it already exists, ask to overwrite if not.
+		if (fs.existsSync(filePath)) {
+			// should i ask to overwrite the file?
+			// i think i should see if it is has some data ya.
+			if (fs.lstatSync(filePath).size == 0) {
+				log("file is empty ...");
+				/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
+			} else {
+				// ask the user if he wants to overwrite the file..
+				shouldWrite = await getInput(
+					`${path.basename(
+						filePath
+					)} already exists. do you wish to overwrite its contents ?`
+				);
+			}
+		}
+
+		if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
+			log("writing!");
+			// check access .. wait do it only if file already exists
+			// TODO: this is bad coding style change this,  can we read lstats without access ?
+			try {
+				fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
+				// console.log('can read/write');
+			} catch (err) {
+				if (!err.code == "ENONENT") {
+					exit("no access!");
+				}
+			}
+			// let temp_data = "some data .. haha\n";
+			await fs.promises.writeFile(filePath, toWrite).catch((err) => {
+				log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
+				exit(err.message + err.code);
+			});
+			log("wrote !!");
+		} else {
+			// user said NO DONT OVERWRITE.
+			log("SHOULDNT WRITE ... aborting ...");
+		}
+		// https://nodejs.org/api/fs.html#fs_file_system_flags
+		// exit("good work !");
+	} else {
+		// use slug for file name
+
+	}
+
+	// fs.writeFileSync('kata.json', JSON.stringify(kata, null, 4));
 	// // ok this is getting executed ahead of time / executing / GET response.
 	// log(kata)
 	// await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4)).catch(({message, codee}) => {

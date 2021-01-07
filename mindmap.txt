@@ -26,6 +26,12 @@ config will have langauge option and then that will be used to get description
 I should probably also make a way to make the user fill out the info before use.
 
 nested string objects in templating have been taken care of now arrays left i guess wait lemme experiment.
+yup done. nice.
+
+ok now implementing axios
+now i have to focus on writing the file.
+
+
 
 [intl]
 
