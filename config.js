@@ -23,5 +23,9 @@ module.exports = {
 			}
 		}
 	],
-	"TEMPLATEFILEPATH":"./template.txt"
+	"TEMPLATEFILEPATH":"./template.txt",
+	"LANGUAGE": {
+		"NAME":"javascript",
+		"EXT": "js"
+	}
 }

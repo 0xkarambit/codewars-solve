@@ -28,10 +28,23 @@ I should probably also make a way to make the user fill out the info before use.
 nested string objects in templating have been taken care of now arrays left i guess wait lemme experiment.
 yup done. nice.
 
-ok now implementing axios
-now i have to focus on writing the file.
+ok now implementing axios DONE
+now i have to focus on writing the file. DONE
 
+wow i think this tool is actually functional now!!
 
+now i should work on a README.md and open source this!
+
+should i warn the user if dataObj.languages does not contain his language of choice ? ya but later
+ohh setting description is still left...
+
+DAMN I CANT BELIEVE I CODED THE getDescription function wow.
+but its not cross problem currently i guess.
+nice.
+
+oh also i still need to add languages support, hehe and improve the langauge identifying RegExp
+try next on (https://www.codewars.com/kata/529adbf7533b761c560004e5/train/javascript)
+oh looking at the generated file i guess we need the text-wrap thing here.
 
 [intl]
 

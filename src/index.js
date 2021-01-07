@@ -9,7 +9,7 @@ import axios from "axios";
 
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
 import { exit, getInput } from "./helper_functions";
-import TemplateEngine from "./template.js";
+import TemplateEngine from "./TemplateEngine.js";
 
 const log = console.log;
 const { argv } = process;
@@ -33,17 +33,16 @@ if (url.hostname !== "www.codewars.com") {
 
 
 (async function() {
-	// main code
+	// todo: yeah improve this with args options too..
 	const id = url.pathname.split("/")[2];
+	// https://www.codewars.com/api/v1/code-challenges/:id_or_slug
 	const query = `https://www.codewars.com/api/v1/code-challenges/${id}`;
-	let title = ""; // get title from https://www.codewars.com/api/v1/code-challenges/:id_or_slug
 
-	log(red(query));
+	// log(red(query));
 
 	const {data:kata} = await axios.get(query).catch( ({message, code}) => exit(message + code));
 
-	title = kata.slug;
-	log(red(title));
+	// log(red(title));
 	/*
 	let d = new Date();
 	log({
@@ -72,6 +71,10 @@ if (url.hostname !== "www.codewars.com") {
 
 	// READ CONFIG
 	const config = require(path.join(__dirname, "./../config.js"));
+	// manipulate the kata description here
+	kata.description = getDescription(kata.description);
+	// log(kata.description);
+	// exit("DESCRIPTION CHECK")
 	let dataObj = Object.fromEntries([...Object.entries(config), ...Object.entries(kata)]);
 
 	// ALL TEMPLATING CODE
@@ -80,9 +83,12 @@ if (url.hostname !== "www.codewars.com") {
 	let toWrite = templateEngine.render();
 
 	// WRITING CODE
-	// let fileName = templateEngine.getVal("slug");
-	// log(fileName)
-	// exit('lol');
+	// using slug problem name by default
+	let fileName = kata.slug + '.' + config.LANGUAGE.EXT
+	// TODO add extension according to langauge || also --lang option
+	let shouldWrite = "y";
+
+	// refactor thin into new function
 	if (argv.includes("--file") || argv.includes("-f")) {
 		// ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
 		// so i will just use node -r esm src/index.js ...args to run for now;
@@ -99,58 +105,58 @@ if (url.hostname !== "www.codewars.com") {
 		// should be i guess (funny thing for me it does this (again i am using git scm thats why)
 		// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
 		// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
-		let filePath = path.resolve(process.cwd(), argv[i + 1]);
-
-		log(red(filePath));
-		log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
-
-		let shouldWrite = "y";
-
-		// check if file is empty if it already exists, ask to overwrite if not.
-		if (fs.existsSync(filePath)) {
-			// should i ask to overwrite the file?
-			// i think i should see if it is has some data ya.
-			if (fs.lstatSync(filePath).size == 0) {
-				log("file is empty ...");
-				/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
-			} else {
-				// ask the user if he wants to overwrite the file..
-				shouldWrite = await getInput(
-					`${path.basename(
-						filePath
-					)} already exists. do you wish to overwrite its contents ?`
-				);
-			}
-		}
-
-		if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
-			log("writing!");
-			// check access .. wait do it only if file already exists
-			// TODO: this is bad coding style change this,  can we read lstats without access ?
-			try {
-				fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
-				// console.log('can read/write');
-			} catch (err) {
-				if (!err.code == "ENONENT") {
-					exit("no access!");
-				}
-			}
-			// let temp_data = "some data .. haha\n";
-			await fs.promises.writeFile(filePath, toWrite).catch((err) => {
-				log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
-				exit(err.message + err.code);
-			});
-			log("wrote !!");
-		} else {
-			// user said NO DONT OVERWRITE.
-			log("SHOULDNT WRITE ... aborting ...");
-		}
-		// https://nodejs.org/api/fs.html#fs_file_system_flags
-		// exit("good work !");
-	} else {
-		// use slug for file name
-
+		fileName = argv[i + 1];
 	}
+
+	let filePath = path.resolve(process.cwd(), fileName);
+
+	log(red(filePath));
+	log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
+
+	// exit(red("testing"))
+	// check if file is empty if it already exists, ask to overwrite if not.
+	if (fs.existsSync(filePath)) {
+		// should i ask to overwrite the file?
+		// i think i should see if it is has some data ya.
+		if (fs.lstatSync(filePath).size == 0) {
+			// not useful i guess coz unedited file generated with this tool will always have some text
+			// maybe i could use hashing or crypto or something but is it really required nope.
+			log("file is empty ...");
+			/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
+		} else {
+			// ask the user if he wants to overwrite the file..
+			shouldWrite = await getInput(
+				`${path.basename(
+					filePath
+				)} already exists. do you wish to overwrite its contents ?`
+			);
+		}
+	}
+
+	if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
+		log("writing!");
+		// check access .. wait do it only if file already exists
+		// TODO: this is bad coding style change this,  can we read lstats without access ?
+		try {
+			fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
+			// console.log('can read/write');
+		} catch (err) {
+			if (!err.code == "ENONENT") {
+				exit("no access!");
+			}
+		}
+		// let temp_data = "some data .. haha\n";
+		await fs.promises.writeFile(filePath, toWrite).catch((err) => {
+			log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
+			exit(err.message + err.code);
+		});
+		log("wrote !!");
+	} else {
+		// user said NO DONT OVERWRITE.
+		log("SHOULDNT WRITE ... aborting ...");
+	}
+	// https://nodejs.org/api/fs.html#fs_file_system_flags
+	// exit("good work !");
 
 	// fs.writeFileSync('kata.json', JSON.stringify(kata, null, 4));
 	// // ok this is getting executed ahead of time / executing / GET response.
@@ -162,6 +168,36 @@ if (url.hostname !== "www.codewars.com") {
 
 function red(str) {
 	return "\x1b[91m" + str + "\x1b[0m";
+}
+
+function getDescription(desc, langauge = "javascript") {
+	let fDesc = ""; // formated desc;
+	// code examples are separated by ```(s)
+	let k = desc.split('```');
+	let start = k.shift(); // start desc; index: 0
+	let end = k.pop() // end desc; index: last
+	let middle = getLangSpecificCodeExample(langauge, k);
+
+	return start + middle + end;
+}
+
+function getLangSpecificCodeExample(lang, desc) {
+	desc = desc.filter( (val) => val !== '\n' );
+	let langsWithDesc = [];
+	let examples = "";
+	for (let i in desc) {
+		let l = desc[i];
+		let obj = {
+			name: l.match(/[a-z]*\w/)[0],
+			index: i,
+		}
+		langsWithDesc.push(obj);
+		if (obj.name == lang) {
+			examples = l;
+		}
+	}
+	return examples;
+	// log(langsWithDesc);
 }
 
 /* code for Sum string as numbers

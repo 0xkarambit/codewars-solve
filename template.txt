@@ -1,5 +1,15 @@
-$USERNAME $BRANCH
-$TEMPLATEFILEPATH
-ok its good;
-$DATE
-$languages[0]
+// $USERNAME https://github.com/$USERNAME
+// $DATE
+// $LANGUAGE.NAME
+
+// #name $url
+// category: $category
+// rank: $rank.name
+
+/*
+$description
+*/
+
+function solve(arg) {
+	return arg;
+}

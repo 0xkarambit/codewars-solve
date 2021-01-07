@@ -23,8 +23,6 @@
   "homepage": "https://github.com/HarshitJoshi9152/codewars-solve#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "esm": "^3.2.25",
-    "lodash": "^4.17.20",
-    "squirrelly": "^8.0.8"
+    "esm": "^3.2.25"
   }
 }
