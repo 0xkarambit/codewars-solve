@@ -56,14 +56,17 @@ function render(temp, data) {
 	for (let line of lines) {
 		let words = line.split(' ');
 		for (let word of words) {
+			// its a sub
 			if (word[0] == '$') {
-				if (typeof data[word.slice(1)] == "function") {
-					txt += data[word.slice(1)]() + ' ';
+				let sub = get(word.slice(1));
+				if (typeof sub == "function") {
+					txt += sub() + ' ';
 					continue;
 				}
-				txt += data[word.slice(1)] + ' ';
+				txt += sub + ' ';
 				continue;
 			}
+			// its not a sub;
 			if (words.indexOf(word) == words.length - 1) {
 				// if this is last word dont add space/delimiter;
 				txt += word;
@@ -72,6 +75,8 @@ function render(temp, data) {
 			txt += word + ' ';
 		}
 	}
+	let get = (prop) => eval(`data.${prop}`); // probably not safe i guess idk though
+	// but now i dont have to write that template api file
 	return txt;
 }
 

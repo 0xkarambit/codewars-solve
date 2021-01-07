@@ -5,7 +5,6 @@ const fs = require("fs");
 const path = require("path");
 // import { resolve } from "path";
 
-const sqrl = require('squirrelly');
 
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
 import { exit, getInput } from "./helper_functions";
@@ -32,77 +31,7 @@ if (url.hostname !== "www.codewars.com") {
 }
 
 
-(async () => {
-	// output/ coding file writing ? well normally this info should be in a config file...
-	if (argv.includes("--file") || argv.includes("-f")) {
-		// ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
-		// so i will just use node -r esm src/index.js ...args to run for now;
-
-		// verify if the file path is provided
-		let i =
-			argv.indexOf("--file") !== -1
-				? argv.indexOf("--file")
-				: argv.indexOf("-f");
-		if (!argv[i + 1]) exit("no file provided");
-		// ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
-		//     (i am using git scm so for me / is essentially "C:\Program Files\Git");
-		// but if we use `join` if a user enters --file /index.js the file will be created at process.cwd()/index.js
-		// should be i guess (funny thing for me it does this (again i am using git scm thats why)
-		// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
-		// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
-		let filePath = path.resolve(process.cwd(), argv[i + 1]);
-
-		log(red(filePath));
-		log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
-
-		let shouldWrite = "y";
-
-		// check if file is empty if it already exists, ask to overwrite if not.
-		if (fs.existsSync(filePath)) {
-			// should i ask to overwrite the file?
-			// i think i should see if it is has some data ya.
-			if (fs.lstatSync(filePath).size == 0) {
-				log("file is empty ...");
-				/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
-			} else {
-				// ask the user if he wants to overwrite the file..
-				shouldWrite = await getInput(
-					`${path.basename(
-						filePath
-					)} already exists. do you wish to overwrite its contents ?`
-				);
-			}
-		}
-
-		if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
-			log("writing!");
-			// check access .. wait do it only if file already exists
-			// TODO: this is bad coding style change this,  can we read lstats without access ?
-			try {
-				fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
-				// console.log('can read/write');
-			} catch (err) {
-				if (!err.code == "ENONENT") {
-					exit("no access!");
-				}
-			}
-			let temp_data = "some data .. haha\n";
-			await fs.promises.writeFile(filePath, temp_data).catch((err) => {
-				log(
-					"error encountered while writing to ${path.basename(filePath)}. error written to stderr"
-				);
-				exit(err.message + err.code);
-			});
-			log("wrote !!");
-		} else {
-			log("SHOULDNT WRITE ... aborting ...");
-		}
-		// https://nodejs.org/api/fs.html#fs_file_system_flags
-		// exit("good work !");
-	}
-
-	// separation........ <hr>
-
+(async function() {
 	// main code
 	const id = url.pathname.split("/")[2];
 	const query = `https://www.codewars.com/api/v1/code-challenges/${id}`;
@@ -121,11 +50,12 @@ if (url.hostname !== "www.codewars.com") {
 		});
 
 		// The whole response has been received. Print out the result.
-		res.on("end", () => {
+		res.on("end", async () => {
 			kata = JSON.parse(data);
 			// console.log(kata);
 			title = kata.slug;
 			log(red(title));
+			/*
 			let d = new Date();
 			log({
 				time: d.toLocaleTimeString(),
@@ -137,7 +67,8 @@ if (url.hostname !== "www.codewars.com") {
 					dateStyle: "full",
 					timeStyle: "long"
 				}).format(d)
-			);
+			);*/
+
 			// await fs.promises.writeFile('kata.json', JSON.stringify(kata, null, 4))
 			// .catch(({message, code}) => exit(message + code) );
 			// provide a way to set the script format and a user.js to pass options to generate the script/program
@@ -151,15 +82,79 @@ if (url.hostname !== "www.codewars.com") {
 			// path.normalize(__dirname, "./../config.js")
 
 			const config = require(path.join(__dirname, "./../config.js"));
-			// log(config.branch);
-			let temp = templateEngine.getTemplate(config.templateFilePath)
-			
-			// log(temp);
-			log(templateEngine.render(temp, config));
-			// i tried sqrl and _ but i now think that i should make my own engine
-			// log(sqrl.render(temp, config));
-			// log(templateEngine.processTemplate(temp, config))
+			let temp = templateEngine.getTemplate(config.TEMPLATEFILEPATH);
+			// now i have to make a union of $kata and $config
+			// Object.fromEntries([...Object.entries(config), ...Object.entries(kataDefaultValueObj)])
+			// but kata object contains more datatypes than strings.
+			let dataObj = Object.fromEntries([...Object.entries(config), ...Object.entries(kata)]);
+			let toWrite = templateEngine.render(temp, dataObj);
 
+			// writing code 
+			if (argv.includes("--file") || argv.includes("-f")) {
+				// ERROR: ok so when using npm start --file is not a part of argv but when running node ./script.js it is.
+				// so i will just use node -r esm src/index.js ...args to run for now;
+
+				// verify if the file path is provided
+				let i =
+					argv.indexOf("--file") !== -1
+						? argv.indexOf("--file")
+						: argv.indexOf("-f");
+				if (!argv[i + 1]) exit("no file provided");
+				// ok so with `resolve` if a user enters --file /index.js the file will be created at /index.js
+				//     (i am using git scm so for me / is essentially "C:\Program Files\Git");
+				// but if we use `join` if a user enters --file /index.js the file will be created at process.cwd()/index.js
+				// should be i guess (funny thing for me it does this (again i am using git scm thats why)
+				// "C:\backup\Documents\html\javaScript\projects\codewars-solve\C:\Program Files\Git\index.js" )
+				// simple name.js works with both, lets just use resolve for now. (seems better to me btw);
+				let filePath = path.resolve(process.cwd(), argv[i + 1]);
+
+				log(red(filePath));
+				log(fs.existsSync(filePath) ? "file exists" : "file does not exist");
+
+				let shouldWrite = "y";
+
+				// check if file is empty if it already exists, ask to overwrite if not.
+				if (fs.existsSync(filePath)) {
+					// should i ask to overwrite the file?
+					// i think i should see if it is has some data ya.
+					if (fs.lstatSync(filePath).size == 0) {
+						log("file is empty ...");
+						/* can the stats still be disturbed if we write to it ? hmmmm lets write for now... */
+					} else {
+						// ask the user if he wants to overwrite the file..
+						shouldWrite = await getInput(
+							`${path.basename(
+								filePath
+							)} already exists. do you wish to overwrite its contents ?`
+						);
+					}
+				}
+
+				if (["y", "yes", "Y", "YES"].includes(shouldWrite)) {
+					log("writing!");
+					// check access .. wait do it only if file already exists
+					// TODO: this is bad coding style change this,  can we read lstats without access ?
+					try {
+						fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
+						// console.log('can read/write');
+					} catch (err) {
+						if (!err.code == "ENONENT") {
+							exit("no access!");
+						}
+					}
+					// let temp_data = "some data .. haha\n";
+					await fs.promises.writeFile(filePath, toWrite).catch((err) => {
+						log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
+						exit(err.message + err.code);
+					});
+					log("wrote !!");
+				} else {
+					// user said NO DONT OVERWRITE.
+					log("SHOULDNT WRITE ... aborting ...");
+				}
+				// https://nodejs.org/api/fs.html#fs_file_system_flags
+				// exit("good work !");
+			}
 
 			// fs.writeFileSync('kata.json', JSON.stringify(kata, null, 4));
 		});
@@ -175,15 +170,6 @@ if (url.hostname !== "www.codewars.com") {
 	// 	exit(message + code);
 	// });
 })();
-
-// now only creating the file and writing some prerequisite content is left
-
-function makeFile(title, ext = "js") {
-	// add date, name, challengeName, // should i get name, etc from a config file ?
-	let d = new Date();
-	let textView = `${url}
-  ${name} ${date} ${startTime}`;
-}
 
 function red(str) {
 	return "\x1b[91m" + str + "\x1b[0m";

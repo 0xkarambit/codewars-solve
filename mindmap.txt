@@ -14,6 +14,19 @@ or better yet export data with a js module
 
 should i add a default template options/variables file ?
 
+should i add Promise based interface for async network requesting ?
+
+instead of asking the user if he wants to overwrite we should add the -f flag and only
+allow overwriting when -f flag is set and abort the operation in case already exists.
+
+oh and also should config file really contain the user data like name ?
+nope its fine
+
+config will have langauge option and then that will be used to get description
+I should probably also make a way to make the user fill out the info before use.
+
+nested string objects in templating have been taken care of now arrays left i guess wait lemme experiment.
+
 [intl]
 
 methods (constructors) to search for
@@ -32,6 +45,8 @@ i feel that finding size of file when we know it exist is a bit overkill is it ?
 
 whats up with UnhandledPromiseRejectionWarning ?
 code execution doesnt stop when we encounter it i guess
+
+so whats export default vs module.exports = {}
 
 [OFF_TOPIC]
 

@@ -1,4 +1,5 @@
-$name $branch
-$templateFilePath
+$USERNAME $BRANCH
+$TEMPLATEFILEPATH
 ok its good;
-$date
+$DATE
+$languages[0]

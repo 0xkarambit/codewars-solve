@@ -1,15 +1,15 @@
 const { getInput } = require('./helper_functions');
+const https = require('https');
 
 (async () => {
 	let output = ''
-	while (output == '') {
-		output = await getInput("hows your day today ?");
+	https.get('https://example.com', async (res) => {
+		// ok so await cannot be used inside here oh i got it i need to make the callback an async function
+		// yes it works now yes !!!
+		output = await getInput('how was your day ?')
+		console.log("some thing in betewwwen");
 		console.log(output)
-		// doesnt work after 2 logs and printing data 1 time
-		// oh it stops becasue we are calling rl.close() !!
-	}
-	console.log("some thing in betewwwen");
-	console.log(output)
+	})
 })()
 
 
