@@ -46,6 +46,10 @@ oh also i still need to add languages support, hehe and improve the langauge ide
 try next on (https://www.codewars.com/kata/529adbf7533b761c560004e5/train/javascript)
 oh looking at the generated file i guess we need the text-wrap thing here.
 
+nice now also working on https://www.codewars.com/kata/529adbf7533b761c560004e5/train/javascript
+
+aah cant use it like that https://github.com/$USERNAME
+
 [intl]
 
 methods (constructors) to search for
@@ -60,12 +64,19 @@ also new filenot being created
 watch todo in index.js
 i feel that finding size of file when we know it exist is a bit overkill is it ?
 
-[nodejs]
+[nodejs && javascript]
 
 whats up with UnhandledPromiseRejectionWarning ?
 code execution doesnt stop when we encounter it i guess
 
 so whats export default vs module.exports = {}
+
+learn typescript
+static vs public methods
+static methods can only be called on class and not on the instance of the class.
+public methods can only be called on instance of the class and not on the class.
+When a method is private it means it can only be accessed by objects OF THE SAME CLASS.
+todo: learn typescript, css, sass, react, bundling, UI, UX and more js and oop in js
 
 [OFF_TOPIC]
 

@@ -72,6 +72,8 @@ if (url.hostname !== "www.codewars.com") {
 	// READ CONFIG
 	const config = require(path.join(__dirname, "./../config.js"));
 	// manipulate the kata description here
+	// log(kata.description)
+	// await fs.promises.writeFile('kata2.json', JSON.stringify(kata, null, 4))
 	kata.description = getDescription(kata.description);
 	// log(kata.description);
 	// exit("DESCRIPTION CHECK")
@@ -151,6 +153,7 @@ if (url.hostname !== "www.codewars.com") {
 			exit(err.message + err.code);
 		});
 		log("wrote !!");
+		process.exit();
 	} else {
 		// user said NO DONT OVERWRITE.
 		log("SHOULDNT WRITE ... aborting ...");
@@ -182,7 +185,7 @@ function getDescription(desc, langauge = "javascript") {
 }
 
 function getLangSpecificCodeExample(lang, desc) {
-	desc = desc.filter( (val) => val !== '\n' );
+	desc = desc.filter( (val) => !['\n', '\n\n'].includes(val) );
 	let langsWithDesc = [];
 	let examples = "";
 	for (let i in desc) {

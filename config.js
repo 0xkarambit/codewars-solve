@@ -12,17 +12,6 @@ module.exports = {
 			timeStyle: "long"
 		}).format(new Date());
 	},
-	// perhaps i dont need to mark "dynamic content" as "dynamic content"
-	"dynamicInfo":[
-		{
-			"date": () => {
-				return new Intl.DateTimeFormat("en-GB", {
-					dateStyle: "full",
-					timeStyle: "long"
-				}).format(new Date());
-			}
-		}
-	],
 	"TEMPLATEFILEPATH":"./template.txt",
 	"LANGUAGE": {
 		"NAME":"javascript",

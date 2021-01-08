@@ -1,8 +1,8 @@
-// $USERNAME https://github.com/$USERNAME
+// $USERNAME https://github.com/HarshitJoshi9152
 // $DATE
 // $LANGUAGE.NAME
 
-// #name $url
+// $name $url
 // category: $category
 // rank: $rank.name
 
