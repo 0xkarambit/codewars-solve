@@ -17,6 +17,9 @@
   ],
   "author": "Harshit Joshi",
   "license": "MIT",
+  "bin": {
+    "codewars": "./src/index.js"
+  },
   "bugs": {
     "url": "https://github.com/HarshitJoshi9152/codewars-solve/issues"
   },

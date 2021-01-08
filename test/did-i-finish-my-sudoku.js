@@ -1,5 +1,5 @@
 // HarshitJoshi9152 https://github.com/HarshitJoshi9152
-// Friday, January 8, 2021 at 5:11:15 PM GMT+5:30 
+// Friday, January 8, 2021 at 6:45:18 PM GMT+5:30 
 // javascript 
 
 // Did I Finish my Sudoku? https://www.codewars.com/kata/53db96041f1a7d32dc0004d2 

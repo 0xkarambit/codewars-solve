@@ -3,7 +3,7 @@ const path = require('path');
 const log = console.log;
 const { exit } = require('./helper_functions');
 
-export default class TemplateEngine{
+module.exports = class TemplateEngine{
 	constructor(templatePath, dataObj) {
 		this.templatePath = templatePath;
 		this.dataObj = dataObj;

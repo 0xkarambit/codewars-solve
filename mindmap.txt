@@ -50,6 +50,8 @@ nice now also working on https://www.codewars.com/kata/529adbf7533b761c560004e5/
 
 aah cant use it like that https://github.com/$USERNAME
 
+how do i use esm without using node -r esm ?
+
 [intl]
 
 methods (constructors) to search for

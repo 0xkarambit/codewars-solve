@@ -3,13 +3,13 @@
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
-import axios from "axios";
+const axios = require('axios');
 // import { resolve } from "path";
 
 
 // import "./helper_functions" // cant use F12 to do def lookup with this syntax
-import { exit, getInput } from "./helper_functions";
-import TemplateEngine from "./TemplateEngine.js";
+const { exit, getInput } = require("./helper_functions");
+const TemplateEngine = require("./TemplateEngine.js");
 
 const log = console.log;
 const { argv } = process;
@@ -152,7 +152,7 @@ if (url.hostname !== "www.codewars.com") {
 			log("error encountered while writing to ${path.basename(filePath)}. error written to stderr");
 			exit(err.message + err.code);
 		});
-		log("wrote !!");
+		log(`wrote to ./${fileName}`);
 		process.exit();
 	} else {
 		// user said NO DONT OVERWRITE.
