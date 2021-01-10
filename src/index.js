@@ -177,8 +177,8 @@ function getDescription(desc, langauge = "javascript") {
 	let fDesc = ""; // formated desc;
 	// code examples are separated by ```(s)
 	let k = desc.split('```');
-	let start = k.shift(); // start desc; index: 0
-	let end = k.pop() // end desc; index: last
+	let start = prettyPaste(k.shift()); // start desc; index: 0
+	let end = prettyPaste(k.pop()) // end desc; index: last
 	let middle = getLangSpecificCodeExample(langauge, k);
 
 	return start + middle + end;
@@ -202,6 +202,22 @@ function getLangSpecificCodeExample(lang, desc) {
 	return examples;
 	// log(langsWithDesc);
 }
+
+function prettyPaste(string, limit = 80, delimiter = "\n") {
+	// limit : character limit per line
+	// replaces the whitespace nearest to the limit (before limit) Index with a newline.
+	let template;
+	if (string.length > limit) {
+		let breakIndex = string.substring(0, limit).lastIndexOf(" ");
+		template =
+			string.substring(0, breakIndex) +
+			delimiter +
+			prettyPaste(string.substring(breakIndex + 1), limit, delimiter);
+	}
+	return (template = template || string);
+}
+// it keeps on re-processing the same line if given an input without whitespace in 80 chars
+
 
 /* code for Sum string as numbers
  * also try read the solutions submitted somebody implemented BigInt !! https://www.codewars.com/kata/reviews/5324945e2ece5e1f32000373/groups/572a59c2a3af38951f000858
